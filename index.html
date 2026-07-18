@@ -309,6 +309,20 @@
   @media (min-width: 480px) {
     header.site { padding-top: 38px; }
   }
+  /* Desktop: same single column, sized and spaced for a large screen
+     instead of a stretched phone layout. */
+  @media (min-width: 768px) {
+    .wrap { max-width: 720px; }
+    header.site { padding: 52px 18px 118px; }
+    header.site h1 { font-size: 3rem; }
+    header.site p.lede { font-size: 1.1rem; }
+    .brand { width: 300px; }
+    main { margin-top: -66px; }
+    section.card { padding: 30px 32px; }
+    .share-card .btn-row { grid-template-columns: 1fr 1fr; }
+    form.signup { grid-template-columns: 1fr auto; }
+    form.signup label, form.signup .notice { grid-column: 1 / -1; }
+  }
 </style>
 </head>
 <body>
@@ -357,7 +371,7 @@
          result; the controls stay hidden until it is answered no. -->
     <div id="refine" class="refine">
       <h2>Closer to your home</h2>
-      <p class="muted">The figure above is Eversource's own filed example. Refine it with your usage. A full year of usage gives the most accurate estimate, since it smooths out summer and winter swings.</p>
+      <p class="muted">The figure starts from Eversource's own filed example. Refine it with your usage. A full year of usage gives the most accurate estimate, since it smooths out summer and winter swings.</p>
 
       <div id="solar-q">
         <p><strong>One quick question first.</strong> Does your home have solar panels or another net metering arrangement? Solar billing works differently, so we check before personalizing.</p>
@@ -377,7 +391,9 @@
 
         <label for="kwh-main" id="kwh-main-label">Total kWh over the last 12 months</label>
         <div class="kwh-input">
-          <input type="number" id="kwh-main" inputmode="decimal" min="0" placeholder="8,400" aria-describedby="kwh-main-hint">
+          <!-- type=text, not number: a number input refuses comma-grouped
+               values like the placeholder itself; readKwh strips commas. -->
+          <input type="text" id="kwh-main" inputmode="decimal" placeholder="8,400" aria-describedby="kwh-main-hint">
           <span class="unit">kWh</span>
         </div>
         <p class="hint" id="kwh-main-hint" hidden></p>
@@ -390,7 +406,7 @@
         <div id="month-block" hidden>
           <label for="kwh-month">kWh from that one bill</label>
           <div class="kwh-input">
-            <input type="number" id="kwh-month" inputmode="decimal" min="0" placeholder="700">
+            <input type="text" id="kwh-month" inputmode="decimal" placeholder="700">
             <span class="unit">kWh</span>
           </div>
           <p class="muted">One month is a rough guide. Usage changes with the seasons, so the annual figure this produces is an estimate.</p>
@@ -527,7 +543,7 @@ function show(id) {
   $("screen-solar").hidden = id !== "screen-solar";
 }
 function scrollToResult() {
-  document.querySelector("main").scrollIntoView({ behavior: "smooth", block: "start" });
+  $("screen-result").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // ---- static injected copy (all figures from the engine) ----
@@ -784,26 +800,28 @@ for (const el of document.querySelectorAll("[data-restart]")) {
   });
 }
 
-// ---- signup (stub) ----
-$("signup-form").addEventListener("submit", (e) => {
+// ---- signup ----
+// A dead email box is worse than no email box: the whole section stays
+// hidden until SIGNUP_ENDPOINT is set, so launching without the campaign
+// platform connected cannot show a form that goes nowhere.
+if (!SIGNUP_ENDPOINT) $("signup").hidden = true;
+$("signup-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const notice = $("signup-notice");
-  if (!SIGNUP_ENDPOINT) {
-    notice.textContent = "Signup is not connected yet. It will be live when this page launches.";
-    notice.hidden = false;
-    return;
-  }
-  fetch(SIGNUP_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: $("signup-email").value }),
-  }).then(() => {
+  try {
+    const response = await fetch(SIGNUP_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: $("signup-email").value }),
+    });
+    if (!response.ok) {
+      throw new Error("Signup failed: " + response.status);
+    }
     notice.textContent = "Thanks. You are on the list.";
-    notice.hidden = false;
-  }).catch(() => {
+  } catch {
     notice.textContent = "Something went wrong. Please try again.";
-    notice.hidden = false;
-  });
+  }
+  notice.hidden = false;
 });
 
 // ---- share ----
