@@ -48,9 +48,9 @@
   header.site .wrap { padding-bottom: 0; }
   .kicker {
     display: inline-block;
-    font-size: 0.76rem;
+    font-size: 0.71rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     background: rgba(255, 255, 255, 0.14);
     border: 1px solid rgba(255, 255, 255, 0.28);
@@ -188,6 +188,14 @@
     margin: 8px 0 0;
     position: relative;
     padding-bottom: 16px;
+  }
+  .bignum .per {
+    font-size: clamp(1.05rem, 4.5vw, 1.4rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-left: 8px;
+    color: var(--navy-soft);
+    white-space: nowrap;
   }
   /* Green swash echoing the campaign logo underline. */
   .bignum::after {
@@ -682,6 +690,19 @@ const EYEBROWS = {
   band: "Usage band example",
 };
 
+// The dollar figure renders large with the "a year" / "a month" unit
+// smaller beside it, so the number itself carries the line.
+function setNumber(amount, per) {
+  const num = $("result-number");
+  num.textContent = amount;
+  if (per) {
+    const span = document.createElement("span");
+    span.className = "per";
+    span.textContent = per;
+    num.appendChild(span);
+  }
+}
+
 function setStats(pills) {
   const row = $("result-stats");
   row.textContent = "";
@@ -702,7 +723,7 @@ function renderResult(result, opts = {}) {
   lead.textContent = "Eversource's request could add an estimated";
 
   if (result.mode === "annual") {
-    num.textContent = fmtCents(result.annualCents) + " a year";
+    setNumber(fmtCents(result.annualCents), "a year");
     setStats([{ text: `about ${fmtCents(result.averageMonthlyCents)} a month` }]);
     let subText = "to your bill.";
     if (current.kind === "greenbutton" && current.span) {
@@ -717,7 +738,7 @@ function renderResult(result, opts = {}) {
     $("math-formula").textContent =
       `${fmtDollars(DELTAS.fixedPerMonth)} × 12 months + ${kwhPart} × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.annualCents)}`;
   } else if (result.mode === "singleMonthEstimate") {
-    num.textContent = fmtCents(result.monthlyCents);
+    setNumber(fmtCents(result.monthlyCents), "");
     setStats([{ text: `about ${fmtCents(result.annualIfTypicalCents)} a year if typical` }]);
     sub.textContent =
       `to a month like the one you entered. If that month were typical, that would be about ` +
@@ -725,13 +746,13 @@ function renderResult(result, opts = {}) {
     $("math-formula").textContent =
       `${fmtDollars(DELTAS.fixedPerMonth)} + ${fmtKwh(enteredKwh)} kWh × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.monthlyCents)} for that month`;
   } else if (result.mode === "band") {
-    num.textContent = fmtCents(result.monthlyCents) + " a month";
+    setNumber(fmtCents(result.monthlyCents), "a month");
     setStats([{ text: `about ${fmtCents(result.annualIfTypicalCents)} a year at that level` }]);
     sub.textContent = `at that usage level, about ${fmtCents(result.annualIfTypicalCents)} over a year. Based on: ${result.band}.`;
     $("math-formula").textContent =
       `${fmtDollars(DELTAS.fixedPerMonth)} + band kWh × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.monthlyCents)} a month`;
   } else {
-    num.textContent = fmtCents(toCents(result.annualIncrease)) + " a year";
+    setNumber(fmtCents(toCents(result.annualIncrease)), "a year");
     setStats([
       { text: `${fmtCents(toCents(result.monthlyIncrease))} a month` },
       { text: `+${result.percentOfFiledBenchmarkBill}% on that example bill`, green: true },
