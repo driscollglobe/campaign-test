@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What could Eversource's rate request add to your bill?</title>
+<meta name="description" content="At 700 kWh a month, Eversource is asking for nearly $400 more a year. Estimate what the pending rate request could add to your bill.">
+<meta property="og:title" content="What could Eversource's rate request add to your bill?">
+<meta property="og:description" content="At 700 kWh a month, Eversource is asking for nearly $400 more a year. Estimate what the pending request could add to yours.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    /* Palette sampled from the Oberlander campaign logo. Replace with the
+       official brand hex values if the campaign style guide differs. */
+    --navy: #2c3d9b;        /* campaign royal blue */
+    --navy-soft: #3a4cb8;
+    --green: #26a55c;       /* campaign green, graphics and underline only */
+    --green-text: #1b7c44;  /* darker green, safe for small text on white */
+    --accent: #1b7c44;
+    --paper: #f6f7f9;
+    --card: #ffffff;
+    --ink: #1c2330;
+    --muted: #5a6472;
+    --line: #dde2ea;
+    --good-tap: 52px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--navy-soft); }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 18px 48px; }
+  header.site {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 18px 24px;
+  }
+  header.site .wrap { padding-bottom: 0; }
+  .kicker {
+    display: inline-block;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.14);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 14px;
+  }
+  header.site h1 { font-size: 1.65rem; line-height: 1.2; margin-bottom: 10px; }
+  header.site p.lede { color: #d3daf2; font-size: 1rem; max-width: 46ch; }
+  .brand { margin-bottom: 20px; }
+  .brand-jill {
+    display: block;
+    font-family: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
+    font-size: 3.1rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
+  .brand-swash {
+    display: block;
+    width: 96px;
+    height: 8px;
+    color: var(--green);
+    margin: 2px 0 12px 10px;
+  }
+  .brand-name {
+    display: block;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+  .brand-tag {
+    display: block;
+    font-size: 0.92rem;
+    letter-spacing: 0.24em;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 4px;
+  }
+  .brand-tag em {
+    font-family: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
+    font-style: normal;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1.3rem;
+    color: var(--green);
+    margin-right: 7px;
+  }
+  main { padding-top: 22px; }
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 18px;
+    margin-bottom: 18px;
+  }
+  h2 { font-size: 1.15rem; margin-bottom: 10px; }
+  p { margin-bottom: 10px; }
+  p:last-child { margin-bottom: 0; }
+  .muted { color: var(--muted); font-size: 0.92rem; }
+  button {
+    font: inherit;
+    cursor: pointer;
+    border-radius: 10px;
+    min-height: var(--good-tap);
+  }
+  .btn-primary {
+    display: block;
+    width: 100%;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 14px 16px;
+  }
+  .btn-primary:active { background: var(--navy-soft); }
+  .btn-secondary {
+    display: block;
+    width: 100%;
+    background: #fff;
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 13px 16px;
+  }
+  .btn-row { display: grid; gap: 10px; margin-top: 14px; }
+  .btn-link {
+    background: none;
+    border: none;
+    color: var(--navy-soft);
+    text-decoration: underline;
+    font-size: 0.95rem;
+    padding: 10px 4px;
+    min-height: 44px;
+    text-align: left;
+  }
+  .seg {
+    display: flex;
+    border: 1.5px solid var(--navy);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .seg button {
+    flex: 1;
+    border: none;
+    background: #fff;
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 12px 6px;
+    border-radius: 0;
+  }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; }
+  .kwh-input { display: flex; align-items: center; gap: 8px; }
+  input[type="number"], input[type="email"], input[type="text"] {
+    font: inherit;
+    font-size: 1.15rem;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    min-height: var(--good-tap);
+  }
+  input:focus { outline: 2px solid var(--navy-soft); border-color: var(--navy-soft); }
+  .unit { font-weight: 600; color: var(--muted); }
+  .hint { color: var(--accent); font-size: 0.9rem; margin-top: 8px; }
+  .error { color: #a02020; font-size: 0.95rem; margin-top: 8px; }
+  .bignum {
+    font-size: 2.35rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--navy);
+    margin: 6px 0 4px;
+  }
+  .headline { font-size: 1.05rem; }
+  .subline { font-size: 1rem; margin-bottom: 12px; }
+  .disclaimer {
+    background: #f2f4f8;
+    border-left: 3px solid var(--navy-soft);
+    padding: 12px 14px;
+    font-size: 0.92rem;
+    color: #333c4a;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+  }
+  details {
+    border-top: 1px solid var(--line);
+    margin-top: 14px;
+    padding-top: 4px;
+  }
+  details summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--navy);
+    padding: 12px 0;
+    min-height: 44px;
+    list-style-position: inside;
+  }
+  details .inner { padding: 4px 0 12px; font-size: 0.95rem; }
+  .mathline {
+    background: #f2f4f8;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.88rem;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  .sourceblock { font-size: 0.88rem; color: var(--muted); }
+  .sourceblock strong { color: var(--ink); }
+  .billfig { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; }
+  form.signup { display: grid; gap: 10px; margin-top: 12px; }
+  .notice { background: #e9f6ee; border: 1px solid #bfe3cd; border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; }
+  footer.site {
+    border-top: 1px solid var(--line);
+    margin-top: 10px;
+    padding: 22px 18px 40px;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .attribution {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  [hidden] { display: none !important; }
+  @media (min-width: 480px) {
+    header.site h1 { font-size: 1.95rem; }
+    .bignum { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <!-- Wordmark approximation built in CSS. When the campaign sends exported
+         logo files, drop the white-on-blue version in assets/ and replace this
+         .brand block with: <img src="assets/logo-white.svg" alt="Jill Oberlander for State Senate" style="max-width:280px"> -->
+    <div class="brand" role="img" aria-label="Jill Oberlander for State Senate">
+      <span class="brand-jill" aria-hidden="true">Jill</span>
+      <svg class="brand-swash" viewBox="0 0 120 10" aria-hidden="true" preserveAspectRatio="none">
+        <path d="M4 7 C 40 3, 82 2.5, 116 4.5" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="brand-name" aria-hidden="true">OBERLANDER</span>
+      <span class="brand-tag" aria-hidden="true"><em>for</em> STATE SENATE</span>
+    </div>
+    <span class="kicker">Pending before PURA. Nothing is approved.</span>
+    <h1>What could Eversource's rate request add to your bill?</h1>
+    <p class="lede">Eversource has asked Connecticut regulators for higher electric delivery rates. Enter your usage and this tool estimates what the request, as filed, could add for a home on standard residential Rate 1.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- STEP 1: SOLAR GATE -->
+  <section class="card" id="step-solar">
+    <h2>First, one quick question</h2>
+    <p>Does your home have solar panels or another net metering arrangement?</p>
+    <div class="btn-row">
+      <button class="btn-secondary" id="solar-yes">Yes, we have solar</button>
+      <button class="btn-primary" id="solar-no">No solar</button>
+    </div>
+  </section>
+
+  <!-- STEP 2: USAGE -->
+  <section class="card" id="step-usage" hidden>
+    <h2>How much electricity do you use?</h2>
+    <p class="muted">The most accurate estimate comes from a full year of usage, which smooths out summer and winter swings.</p>
+
+    <div class="seg" role="group" aria-label="Usage input type">
+      <button id="seg-annual" aria-pressed="true">Last 12 months, total</button>
+      <button id="seg-average" aria-pressed="false">Monthly average</button>
+    </div>
+
+    <label for="kwh-main" id="kwh-main-label">Total kWh over the last 12 months</label>
+    <div class="kwh-input">
+      <input type="number" id="kwh-main" inputmode="decimal" min="0" placeholder="8,400" aria-describedby="kwh-main-hint">
+      <span class="unit">kWh</span>
+    </div>
+    <p class="hint" id="kwh-main-hint" hidden></p>
+    <p class="error" id="kwh-main-error" hidden></p>
+    <div class="btn-row">
+      <button class="btn-primary" id="go-main">Estimate my increase</button>
+    </div>
+
+    <button class="btn-link" id="reveal-month">I only have one month's bill</button>
+    <div id="month-block" hidden>
+      <label for="kwh-month">kWh from that one bill</label>
+      <div class="kwh-input">
+        <input type="number" id="kwh-month" inputmode="decimal" min="0" placeholder="700">
+        <span class="unit">kWh</span>
+      </div>
+      <p class="muted">One month is a rough guide. Usage changes with the seasons, so the annual figure this produces is an estimate.</p>
+      <p class="error" id="kwh-month-error" hidden></p>
+      <div class="btn-row">
+        <button class="btn-primary" id="go-month">Estimate from this month</button>
+      </div>
+    </div>
+
+    <button class="btn-link" id="reveal-bands">Can't find your kWh?</button>
+    <div id="bands-block" hidden>
+      <p class="muted">Pick the example closest to your household, or use the benchmark from Eversource's own filing.</p>
+      <div class="btn-row" id="band-buttons"></div>
+    </div>
+
+    <details>
+      <summary>Where to find your kWh</summary>
+      <div class="inner">
+        <p>On a paper Eversource bill, look for the usage section that lists kWh used for the billing period. It appears near the meter readings.</p>
+        <svg class="billfig" viewBox="0 0 400 190" role="img" aria-label="Example bill layout with the kWh line highlighted">
+          <rect x="0" y="0" width="400" height="190" fill="#ffffff"/>
+          <rect x="16" y="14" width="120" height="14" rx="3" fill="#2c3d9b"/>
+          <rect x="16" y="40" width="368" height="1.5" fill="#dde2ea"/>
+          <text x="16" y="62" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">Meter reading Jun 12</text>
+          <text x="300" y="62" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">41,203</text>
+          <text x="16" y="82" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">Meter reading Jul 13</text>
+          <text x="300" y="82" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">41,903</text>
+          <rect x="10" y="92" width="380" height="24" rx="6" fill="#e9f6ee" stroke="#26a55c" stroke-width="1.5"/>
+          <text x="16" y="108" font-size="12" font-weight="bold" fill="#1c2330" font-family="Helvetica, Arial, sans-serif">Total use this period</text>
+          <text x="300" y="108" font-size="12" font-weight="bold" fill="#1b7c44" font-family="Helvetica, Arial, sans-serif">700 kWh</text>
+          <text x="16" y="140" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">Delivery charges</text>
+          <text x="300" y="140" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">$92.85</text>
+          <text x="16" y="160" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">Supply charges</text>
+          <text x="300" y="160" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">$89.43</text>
+          <text x="16" y="182" font-size="9" fill="#8a93a1" font-family="Helvetica, Arial, sans-serif">Example layout, for orientation only. Amounts are illustrative.</text>
+        </svg>
+        <p>Online, sign in at eversource.com and open your usage history. It shows each of the last 12 months, and the 12-month total or average is exactly what this tool asks for.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- SOLAR FALLBACK -->
+  <section class="card" id="screen-solar" hidden>
+    <h2>We can't give your home a reliable number</h2>
+    <p>Solar billing arrangements vary and this calculator may not accurately estimate your increase.</p>
+    <p>For context, here is the example from Eversource's own filing:</p>
+    <p class="headline" id="solar-benchmark-line"></p>
+    <div class="disclaimer" data-disclaimer></div>
+    <div class="btn-row">
+      <button class="btn-secondary" data-restart>Start over</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="card" id="screen-result" hidden aria-live="polite">
+    <p class="headline" id="result-lead"></p>
+    <p class="bignum" id="result-number"></p>
+    <p class="subline" id="result-sub"></p>
+    <div class="disclaimer" data-disclaimer></div>
+
+    <details id="see-math">
+      <summary>See the math</summary>
+      <div class="inner">
+        <p id="math-rates"></p>
+        <div class="mathline" id="math-formula"></div>
+        <p id="math-percent-note" class="muted"></p>
+        <p class="muted">The proposed design folds two existing riders into the base distribution charge, which makes that single line item look like a far bigger jump than the net change. The net delivery increase is the per-kWh figure above.</p>
+        <p class="muted" id="math-verification"></p>
+        <p class="sourceblock" id="math-source"></p>
+      </div>
+    </details>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="change-usage">Change my usage</button>
+      <button class="btn-link" data-restart>Start over</button>
+    </div>
+  </section>
+
+  <!-- SIGNUP -->
+  <section class="card" id="signup" hidden>
+    <h2>Follow this rate case</h2>
+    <p class="muted">PURA will take public comment and hold hearings before it decides. Leave your email and the campaign will send updates as the case moves.</p>
+    <!-- TODO(Kevin): set SIGNUP_ENDPOINT below once the campaign email platform is chosen. -->
+    <form class="signup" id="signup-form">
+      <label for="signup-email" class="muted" style="font-weight:600">Email address</label>
+      <input type="email" id="signup-email" required autocomplete="email" placeholder="you@example.com">
+      <button class="btn-primary" type="submit">Keep me posted</button>
+      <p class="notice" id="signup-notice" hidden></p>
+    </form>
+  </section>
+
+  <!-- SHARE -->
+  <section class="card" id="share" hidden>
+    <h2>Share this</h2>
+    <p class="muted" id="share-copy"></p>
+    <div class="btn-row">
+      <button class="btn-primary" id="share-btn">Share</button>
+      <button class="btn-secondary" id="copy-btn">Copy link</button>
+    </div>
+    <p class="muted" id="copy-confirm" hidden>Copied.</p>
+  </section>
+
+  <!-- CANDIDATE NOTE -->
+  <section class="card" id="candidate" >
+    <!-- CONFIRM WITH CAMPAIGN: exact wording of this position line before deploy. -->
+    <p>Jill Oberlander is running for State Senate in Connecticut's 36th District. She believes ratepayers deserve a full and public review of this request before anyone pays a dollar more.</p>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <!-- COMPLIANCE TODO: confirm exact SEEC entity wording and treasurer attribution
+         with the campaign treasurer before deploy. Placeholder below. -->
+    <div class="attribution">Paid for by Oberlander for State Senate. Approved by Jill Oberlander.</div>
+    <p id="footer-meta"></p>
+    <p>This tool models residential Rate 1 delivery charges only. It is an estimate, not a bill.</p>
+  </div>
+</footer>
+
+<script type="module">
+import {
+  calculate,
+  toCents,
+  DELTAS,
+  RATE_1,
+  META,
+  PERCENT_NOTE,
+  USAGE_BANDS,
+} from "./rates.js";
+
+// Display formatting only. All arithmetic and rounding live in rates.js;
+// cents arrive as integers and are formatted here, never recomputed.
+const fmtCents = (c) =>
+  "$" + (c / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtDollars = (d) => fmtCents(toCents(d));
+const fmtRate = (r) => "$" + r.toFixed(4);
+const fmtDate = (iso) =>
+  new Date(iso + "T12:00:00").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const fmtKwh = (n) => n.toLocaleString("en-US");
+
+const SIGNUP_ENDPOINT = ""; // TODO(Kevin): campaign email platform endpoint.
+const SHARE_TEXT = "At 700 kWh a month, Eversource is asking for nearly $400 more a year.";
+
+const $ = (id) => document.getElementById(id);
+const steps = ["step-solar", "step-usage", "screen-solar", "screen-result"];
+function show(id) {
+  for (const s of steps) $(s).hidden = s !== id;
+  const post = id === "screen-result";
+  $("signup").hidden = !post;
+  $("share").hidden = !(post || id === "screen-solar");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ---- static injected copy (all figures from the engine) ----
+const bench = calculate({ hasSolar: false }); // benchmark mode
+const benchLine =
+  `Eversource's request could add an estimated ${fmtCents(toCents(bench.monthlyIncrease))} a month, ` +
+  `about ${fmtCents(toCents(bench.annualIncrease))} a year, for the company's own 700 kWh benchmark customer. ` +
+  `That is an increase of ${bench.percentOfFiledBenchmarkBill}% on that example bill.`;
+$("solar-benchmark-line").textContent = benchLine;
+
+const DISCLAIMER =
+  "This estimate applies the company's proposed Rate 1 fixed and per-kWh charges filed in " +
+  `PURA Docket ${META.docket}. PURA has not approved the request. Actual bills also depend on ` +
+  "electricity supply, other charges, usage, and eligibility for special rates.";
+for (const el of document.querySelectorAll("[data-disclaimer]")) el.textContent = DISCLAIMER;
+
+$("math-rates").textContent =
+  `The proposal raises the fixed monthly customer charge from ${fmtDollars(RATE_1.customerCharge.current)} ` +
+  `to ${fmtDollars(RATE_1.customerCharge.proposed)}, an increase of ${fmtDollars(DELTAS.fixedPerMonth)} a month. ` +
+  `It also raises delivery charges by a net ${fmtRate(DELTAS.perKwh)} per kWh of use.`;
+$("math-percent-note").textContent = PERCENT_NOTE;
+$("math-verification").textContent =
+  "This calculator applies Eversource's proposed Rate 1 fixed and per-kWh changes and reproduces the " +
+  "company's filed typical-bill examples to the penny. It does not replicate every billing rule, " +
+  "rounding convention, or eligibility condition in the tariff.";
+$("math-source").innerHTML =
+  `<strong>Source:</strong> ${META.source}, PURA Docket No. ${META.docket}, filed ${fmtDate(META.filedDate)}. ` +
+  `Proposed rates would take effect ${fmtDate(META.effectiveNoEarlierThan)} at the earliest. ` +
+  `Last updated ${fmtDate(META.lastUpdated)}.`;
+$("footer-meta").textContent =
+  `Rate request filed ${fmtDate(META.filedDate)} in PURA Docket No. ${META.docket}. ` +
+  `Calculator last updated ${fmtDate(META.lastUpdated)}.`;
+$("share-copy").textContent = SHARE_TEXT;
+
+// ---- band buttons ----
+for (const band of USAGE_BANDS) {
+  const b = document.createElement("button");
+  b.className = "btn-secondary";
+  b.textContent = band.label;
+  b.addEventListener("click", () => renderResult(calculate({ hasSolar: false, usageBandId: band.id })));
+  $("band-buttons").appendChild(b);
+}
+const benchBtn = document.createElement("button");
+benchBtn.className = "btn-secondary";
+benchBtn.textContent = "Skip this, use the filed 700 kWh example";
+benchBtn.addEventListener("click", () => renderResult(calculate({ hasSolar: false })));
+$("band-buttons").appendChild(benchBtn);
+
+// ---- solar gate ----
+$("solar-yes").addEventListener("click", () => {
+  const gate = calculate({ hasSolar: true });
+  if (!gate.supported) show("screen-solar");
+});
+$("solar-no").addEventListener("click", () => show("step-usage"));
+
+// ---- usage input ----
+let mainMode = "annual"; // or "average"
+function setMainMode(mode) {
+  mainMode = mode;
+  $("seg-annual").setAttribute("aria-pressed", String(mode === "annual"));
+  $("seg-average").setAttribute("aria-pressed", String(mode === "average"));
+  $("kwh-main-label").textContent =
+    mode === "annual" ? "Total kWh over the last 12 months" : "Average kWh per month, over 12 months";
+  $("kwh-main").placeholder = mode === "annual" ? "8,400" : "700";
+  $("kwh-main-hint").hidden = true;
+}
+$("seg-annual").addEventListener("click", () => setMainMode("annual"));
+$("seg-average").addEventListener("click", () => setMainMode("average"));
+
+function readKwh(inputEl, errorEl) {
+  const raw = inputEl.value.replace(/,/g, "").trim();
+  const n = Number(raw);
+  if (raw === "" || !Number.isFinite(n) || n < 0) {
+    errorEl.textContent = "Enter your kWh as a number, like 8400.";
+    errorEl.hidden = false;
+    return null;
+  }
+  errorEl.hidden = true;
+  return n;
+}
+
+$("go-main").addEventListener("click", () => {
+  const n = readKwh($("kwh-main"), $("kwh-main-error"));
+  if (n === null) return;
+  if (mainMode === "annual" && n > 0 && n < 1200) {
+    $("kwh-main-hint").textContent =
+      "That looks low for a 12-month total. If it is a monthly average, switch the toggle above.";
+    $("kwh-main-hint").hidden = false;
+  }
+  const result = mainMode === "annual"
+    ? calculate({ hasSolar: false, annualKwh: n })
+    : calculate({ hasSolar: false, averageMonthlyKwh: n });
+  renderResult(result, n);
+});
+
+$("reveal-month").addEventListener("click", () => { $("month-block").hidden = !$("month-block").hidden; });
+$("reveal-bands").addEventListener("click", () => { $("bands-block").hidden = !$("bands-block").hidden; });
+
+$("go-month").addEventListener("click", () => {
+  const n = readKwh($("kwh-month"), $("kwh-month-error"));
+  if (n === null) return;
+  renderResult(calculate({ hasSolar: false, monthlyKwh: n }), n);
+});
+
+// ---- result rendering ----
+function renderResult(result, enteredKwh) {
+  if (!result.supported) { show("screen-solar"); return; }
+  const lead = $("result-lead"), num = $("result-number"), sub = $("result-sub");
+
+  if (result.mode === "annual") {
+    lead.textContent = "Eversource's request could add an estimated";
+    num.textContent = fmtCents(result.annualCents) + " a year";
+    sub.textContent = `to your bill. That averages about ${fmtCents(result.averageMonthlyCents)} a month.`;
+    const kwhPart = mainMode === "average"
+      ? `${fmtKwh(enteredKwh)} kWh average × 12 months`
+      : `${fmtKwh(enteredKwh)} kWh`;
+    $("math-formula").textContent =
+      `${fmtDollars(DELTAS.fixedPerMonth)} × 12 months + ${kwhPart} × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.annualCents)}`;
+  } else if (result.mode === "singleMonthEstimate") {
+    lead.textContent = "Eversource's request could add an estimated";
+    num.textContent = fmtCents(result.monthlyCents);
+    sub.textContent =
+      `to a month like the one you entered. If that month were typical, that would be about ` +
+      `${fmtCents(result.annualIfTypicalCents)} over a year. A single month is an estimate, since usage changes with the seasons.`;
+    $("math-formula").textContent =
+      `${fmtDollars(DELTAS.fixedPerMonth)} + ${fmtKwh(enteredKwh)} kWh × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.monthlyCents)} for that month`;
+  } else if (result.mode === "band") {
+    lead.textContent = "Eversource's request could add an estimated";
+    num.textContent = fmtCents(result.monthlyCents) + " a month";
+    sub.textContent = `at that usage level, about ${fmtCents(result.annualIfTypicalCents)} over a year. Based on: ${result.band}.`;
+    $("math-formula").textContent =
+      `${fmtDollars(DELTAS.fixedPerMonth)} + band kWh × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.monthlyCents)} a month`;
+  } else {
+    lead.textContent = "Eversource's request could add an estimated";
+    num.textContent = fmtCents(toCents(result.monthlyIncrease)) + " a month";
+    sub.textContent =
+      `for the company's own 700 kWh benchmark customer, about ${fmtCents(toCents(result.annualIncrease))} a year. ` +
+      `That is an increase of ${result.percentOfFiledBenchmarkBill}% on that example bill, as filed.`;
+    $("math-formula").textContent =
+      `Filed table, 700 kWh row: ${fmtCents(toCents(result.monthlyIncrease))} a month × 12 = ${fmtCents(toCents(result.annualIncrease))} a year`;
+  }
+  show("screen-result");
+}
+
+$("change-usage").addEventListener("click", () => show("step-usage"));
+for (const el of document.querySelectorAll("[data-restart]")) {
+  el.addEventListener("click", () => show("step-solar"));
+}
+
+// ---- signup (stub) ----
+$("signup-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const notice = $("signup-notice");
+  if (!SIGNUP_ENDPOINT) {
+    notice.textContent = "Signup is not connected yet. It will be live when this page launches.";
+    notice.hidden = false;
+    return;
+  }
+  fetch(SIGNUP_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: $("signup-email").value }),
+  }).then(() => {
+    notice.textContent = "Thanks. You are on the list.";
+    notice.hidden = false;
+  }).catch(() => {
+    notice.textContent = "Something went wrong. Please try again.";
+    notice.hidden = false;
+  });
+});
+
+// ---- share ----
+$("share-btn").addEventListener("click", async () => {
+  const payload = { title: document.title, text: SHARE_TEXT, url: location.href };
+  if (navigator.share) {
+    try { await navigator.share(payload); } catch { /* user canceled */ }
+  } else {
+    copyLink();
+  }
+});
+function copyLink() {
+  navigator.clipboard.writeText(SHARE_TEXT + " " + location.href).then(() => {
+    $("copy-confirm").hidden = false;
+    setTimeout(() => { $("copy-confirm").hidden = true; }, 2500);
+  });
+}
+$("copy-btn").addEventListener("click", copyLink);
+</script>
+</body>
+</html>
