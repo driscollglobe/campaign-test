@@ -52,45 +52,11 @@
   }
   header.site h1 { font-size: 1.65rem; line-height: 1.2; margin-bottom: 10px; }
   header.site p.lede { color: #d3daf2; font-size: 1rem; max-width: 46ch; }
-  .brand { margin-bottom: 20px; }
-  .brand-jill {
+  .brand {
     display: block;
-    font-family: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
-    font-size: 3.1rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #fff;
-  }
-  .brand-swash {
-    display: block;
-    width: 96px;
-    height: 8px;
-    color: var(--green);
-    margin: 2px 0 12px 10px;
-  }
-  .brand-name {
-    display: block;
-    font-weight: 800;
-    font-size: 1.6rem;
-    letter-spacing: 0.05em;
-    color: #fff;
-  }
-  .brand-tag {
-    display: block;
-    font-size: 0.92rem;
-    letter-spacing: 0.24em;
-    font-weight: 700;
-    color: #fff;
-    margin-top: 4px;
-  }
-  .brand-tag em {
-    font-family: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
-    font-style: normal;
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 1.3rem;
-    color: var(--green);
-    margin-right: 7px;
+    width: min(250px, 65%);
+    height: auto;
+    margin-bottom: 18px;
   }
   main { padding-top: 22px; }
   section.card {
@@ -221,6 +187,8 @@
   .billfig { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; }
   form.signup { display: grid; gap: 10px; margin-top: 12px; }
   .notice { background: #e9f6ee; border: 1px solid #bfe3cd; border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; }
+  .refine { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
+  .refine h2 { margin-bottom: 6px; }
   footer.site {
     border-top: 1px solid var(--line);
     margin-top: 10px;
@@ -248,17 +216,8 @@
 
 <header class="site">
   <div class="wrap">
-    <!-- Wordmark approximation built in CSS. When the campaign sends exported
-         logo files, drop the white-on-blue version in assets/ and replace this
-         .brand block with: <img src="assets/logo-white.svg" alt="Jill Oberlander for State Senate" style="max-width:280px"> -->
-    <div class="brand" role="img" aria-label="Jill Oberlander for State Senate">
-      <span class="brand-jill" aria-hidden="true">Jill</span>
-      <svg class="brand-swash" viewBox="0 0 120 10" aria-hidden="true" preserveAspectRatio="none">
-        <path d="M4 7 C 40 3, 82 2.5, 116 4.5" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" fill="none"/>
-      </svg>
-      <span class="brand-name" aria-hidden="true">OBERLANDER</span>
-      <span class="brand-tag" aria-hidden="true"><em>for</em> STATE SENATE</span>
-    </div>
+    <!-- Official campaign logo, downloaded from jilloberlander.com. -->
+    <img class="brand" src="assets/logo-white.png" alt="Jill Oberlander for State Senate" width="1024" height="612">
     <span class="kicker">Pending before PURA. Nothing is approved.</span>
     <h1>What could Eversource's rate request add to your bill?</h1>
     <p class="lede">Eversource has asked Connecticut regulators for higher electric delivery rates. Enter your usage and this tool estimates what the request, as filed, could add for a home on standard residential Rate 1.</p>
@@ -267,20 +226,24 @@
 
 <main class="wrap">
 
-  <!-- STEP 1: SOLAR GATE -->
+  <!-- STEP 1: SOLAR GATE, answered before any result is shown -->
   <section class="card" id="step-solar">
     <h2>First, one quick question</h2>
-    <p>Does your home have solar panels or another net metering arrangement?</p>
+    <p>Does your home have solar panels or another net metering arrangement? Solar billing works differently, so we check before showing a number.</p>
     <div class="btn-row">
+      <button class="btn-primary" id="solar-no">No solar, show the numbers</button>
       <button class="btn-secondary" id="solar-yes">Yes, we have solar</button>
-      <button class="btn-primary" id="solar-no">No solar</button>
     </div>
   </section>
 
-  <!-- STEP 2: USAGE -->
-  <section class="card" id="step-usage" hidden>
-    <h2>How much electricity do you use?</h2>
-    <p class="muted">The most accurate estimate comes from a full year of usage, which smooths out summer and winter swings.</p>
+  <!-- Refine block. Authored here at top level to keep the markup readable;
+       the script moves it inside the result card at load, under the number
+       it updates. -->
+  <div id="refine" class="refine" hidden>
+    <h2>Closer to your home</h2>
+    <p class="muted">The figure starts from Eversource's own filed example. Refine it with your usage. A full year of usage gives the most accurate estimate, since it smooths out summer and winter swings.</p>
+
+    <div class="btn-row" id="band-buttons"></div>
 
     <div class="seg" role="group" aria-label="Usage input type">
       <button id="seg-annual" aria-pressed="true">Last 12 months, total</button>
@@ -312,12 +275,6 @@
       </div>
     </div>
 
-    <button class="btn-link" id="reveal-bands">Can't find your kWh?</button>
-    <div id="bands-block" hidden>
-      <p class="muted">Pick the example closest to your household, or use the benchmark from Eversource's own filing.</p>
-      <div class="btn-row" id="band-buttons"></div>
-    </div>
-
     <details>
       <summary>Where to find your kWh</summary>
       <div class="inner">
@@ -342,7 +299,7 @@
         <p>Online, sign in at eversource.com and open your usage history. It shows each of the last 12 months, and the 12-month total or average is exactly what this tool asks for.</p>
       </div>
     </details>
-  </section>
+  </div>
 
   <!-- SOLAR FALLBACK -->
   <section class="card" id="screen-solar" hidden>
@@ -376,7 +333,6 @@
     </details>
 
     <div class="btn-row">
-      <button class="btn-secondary" id="change-usage">Change my usage</button>
       <button class="btn-link" data-restart>Start over</button>
     </div>
   </section>
@@ -423,16 +379,13 @@
   </div>
 </footer>
 
-<script type="module">
-import {
-  calculate,
-  toCents,
-  DELTAS,
-  RATE_1,
-  META,
-  PERCENT_NOTE,
-  USAGE_BANDS,
-} from "./rates.js";
+<script src="rates.js"></script>
+<script>
+// Classic scripts on purpose: module imports are blocked on file:// pages,
+// and this page must work when opened straight from disk. The IIFE keeps
+// these names from colliding with the globals rates.js declares.
+(() => {
+const { calculate, toCents, DELTAS, RATE_1, META, PERCENT_NOTE, USAGE_BANDS } = globalThis.EversourceRates;
 
 // Display formatting only. All arithmetic and rounding live in rates.js;
 // cents arrive as integers and are formatted here, never recomputed.
@@ -448,7 +401,10 @@ const SIGNUP_ENDPOINT = ""; // TODO(Kevin): campaign email platform endpoint.
 const SHARE_TEXT = "At 700 kWh a month, Eversource is asking for nearly $400 more a year.";
 
 const $ = (id) => document.getElementById(id);
-const steps = ["step-solar", "step-usage", "screen-solar", "screen-result"];
+const steps = ["step-solar", "screen-solar", "screen-result"];
+// What the current result is based on; starts as the zero-effort benchmark
+// and changes as the refine controls update the result in place.
+let current = { kind: "benchmark", enteredKwh: null };
 function show(id) {
   for (const s of steps) $(s).hidden = s !== id;
   const post = id === "screen-result";
@@ -456,6 +412,11 @@ function show(id) {
   $("share").hidden = !(post || id === "screen-solar");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+// The refine block is authored at top level for readable markup; it lives
+// inside the result card, under the number its controls update.
+$("see-math").after($("refine"));
+$("refine").hidden = false;
 
 // ---- static injected copy (all figures from the engine) ----
 const bench = calculate({ hasSolar: false }); // benchmark mode
@@ -494,21 +455,21 @@ for (const band of USAGE_BANDS) {
   const b = document.createElement("button");
   b.className = "btn-secondary";
   b.textContent = band.label;
-  b.addEventListener("click", () => renderResult(calculate({ hasSolar: false, usageBandId: band.id })));
+  b.addEventListener("click", () => {
+    current = { kind: "band", enteredKwh: null };
+    renderResult(calculate({ hasSolar: false, usageBandId: band.id }));
+  });
   $("band-buttons").appendChild(b);
 }
-const benchBtn = document.createElement("button");
-benchBtn.className = "btn-secondary";
-benchBtn.textContent = "Skip this, use the filed 700 kWh example";
-benchBtn.addEventListener("click", () => renderResult(calculate({ hasSolar: false })));
-$("band-buttons").appendChild(benchBtn);
-
-// ---- solar gate ----
+// ---- solar gate, always answered before a result is shown ----
 $("solar-yes").addEventListener("click", () => {
   const gate = calculate({ hasSolar: true });
   if (!gate.supported) show("screen-solar");
 });
-$("solar-no").addEventListener("click", () => show("step-usage"));
+$("solar-no").addEventListener("click", () => {
+  current = { kind: "benchmark", enteredKwh: null };
+  renderResult(calculate({ hasSolar: false }));
+});
 
 // ---- usage input ----
 let mainMode = "annual"; // or "average"
@@ -536,39 +497,44 @@ function readKwh(inputEl, errorEl) {
   return n;
 }
 
+let hintedValue = null;
 $("go-main").addEventListener("click", () => {
   const n = readKwh($("kwh-main"), $("kwh-main-error"));
   if (n === null) return;
-  if (mainMode === "annual" && n > 0 && n < 1200) {
+  if (mainMode === "annual" && n > 0 && n < 1200 && hintedValue !== n) {
     $("kwh-main-hint").textContent =
-      "That looks low for a 12-month total. If it is a monthly average, switch the toggle above.";
+      "That looks low for a 12-month total. If it is a monthly average, switch the toggle above, or tap the button again to continue.";
     $("kwh-main-hint").hidden = false;
+    hintedValue = n;
+    return;
   }
-  const result = mainMode === "annual"
+  $("kwh-main-hint").hidden = true;
+  current = { kind: mainMode === "annual" ? "annual" : "average", enteredKwh: n };
+  renderResult(mainMode === "annual"
     ? calculate({ hasSolar: false, annualKwh: n })
-    : calculate({ hasSolar: false, averageMonthlyKwh: n });
-  renderResult(result, n);
+    : calculate({ hasSolar: false, averageMonthlyKwh: n }));
 });
 
 $("reveal-month").addEventListener("click", () => { $("month-block").hidden = !$("month-block").hidden; });
-$("reveal-bands").addEventListener("click", () => { $("bands-block").hidden = !$("bands-block").hidden; });
 
 $("go-month").addEventListener("click", () => {
   const n = readKwh($("kwh-month"), $("kwh-month-error"));
   if (n === null) return;
-  renderResult(calculate({ hasSolar: false, monthlyKwh: n }), n);
+  current = { kind: "month", enteredKwh: n };
+  renderResult(calculate({ hasSolar: false, monthlyKwh: n }));
 });
 
 // ---- result rendering ----
-function renderResult(result, enteredKwh) {
+function renderResult(result) {
   if (!result.supported) { show("screen-solar"); return; }
+  const enteredKwh = current.enteredKwh;
   const lead = $("result-lead"), num = $("result-number"), sub = $("result-sub");
 
   if (result.mode === "annual") {
     lead.textContent = "Eversource's request could add an estimated";
     num.textContent = fmtCents(result.annualCents) + " a year";
     sub.textContent = `to your bill. That averages about ${fmtCents(result.averageMonthlyCents)} a month.`;
-    const kwhPart = mainMode === "average"
+    const kwhPart = current.kind === "average"
       ? `${fmtKwh(enteredKwh)} kWh average × 12 months`
       : `${fmtKwh(enteredKwh)} kWh`;
     $("math-formula").textContent =
@@ -599,7 +565,6 @@ function renderResult(result, enteredKwh) {
   show("screen-result");
 }
 
-$("change-usage").addEventListener("click", () => show("step-usage"));
 for (const el of document.querySelectorAll("[data-restart]")) {
   el.addEventListener("click", () => show("step-solar"));
 }
@@ -642,6 +607,7 @@ function copyLink() {
   });
 }
 $("copy-btn").addEventListener("click", copyLink);
+})();
 </script>
 </body>
 </html>
