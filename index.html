@@ -189,6 +189,15 @@
   .notice { background: #e9f6ee; border: 1px solid #bfe3cd; border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; }
   .refine { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
   .refine h2 { margin-bottom: 6px; }
+  input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px dashed var(--navy-soft);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 0.95rem;
+    background: #fff;
+  }
   footer.site {
     border-top: 1px solid var(--line);
     margin-top: 10px;
@@ -275,10 +284,19 @@
       </div>
     </div>
 
+    <button class="btn-link" id="reveal-upload">Have your Eversource usage file?</button>
+    <div id="upload-block" hidden>
+      <p class="muted">If you downloaded your usage from your Eversource online account (the Green Button export), it works here. Your file is read on your device and never leaves it.</p>
+      <label for="gb-file" class="muted" style="font-weight:600">Usage file (.csv)</label>
+      <input type="file" id="gb-file" accept=".csv,text/csv">
+      <p class="error" id="gb-error" hidden></p>
+    </div>
+
     <details>
       <summary>Where to find your kWh</summary>
       <div class="inner">
         <p>On a paper Eversource bill, look for the usage section that lists kWh used for the billing period. It appears near the meter readings.</p>
+        <p>Every Eversource paper bill also prints a bar chart of your last 13 months of use. A glance at it tells you whether the bill in your hand is a high month, a low month, or a typical one, which matters if you use the single-month option here.</p>
         <svg class="billfig" viewBox="0 0 400 190" role="img" aria-label="Example bill layout with the kWh line highlighted">
           <rect x="0" y="0" width="400" height="190" fill="#ffffff"/>
           <rect x="16" y="14" width="120" height="14" rx="3" fill="#2c3d9b"/>
@@ -296,7 +314,7 @@
           <text x="300" y="160" font-size="11" fill="#5a6472" font-family="Helvetica, Arial, sans-serif">$89.43</text>
           <text x="16" y="182" font-size="9" fill="#8a93a1" font-family="Helvetica, Arial, sans-serif">Example layout, for orientation only. Amounts are illustrative.</text>
         </svg>
-        <p>Online, sign in at eversource.com and open your usage history. It shows each of the last 12 months, and the 12-month total or average is exactly what this tool asks for.</p>
+        <p>Online, sign in at eversource.com and open the usage view. It lists each of the last 12 months of use, and the 12-month total or average is exactly what this tool asks for.</p>
       </div>
     </details>
   </div>
@@ -380,12 +398,14 @@
 </footer>
 
 <script src="rates.js"></script>
+<script src="greenbutton.js"></script>
 <script>
 // Classic scripts on purpose: module imports are blocked on file:// pages,
 // and this page must work when opened straight from disk. The IIFE keeps
 // these names from colliding with the globals rates.js declares.
 (() => {
 const { calculate, toCents, DELTAS, RATE_1, META, PERCENT_NOTE, USAGE_BANDS } = globalThis.EversourceRates;
+const { parseEversourceUsageCsv } = globalThis.GreenButton;
 
 // Display formatting only. All arithmetic and rounding live in rates.js;
 // cents arrive as integers and are formatted here, never recomputed.
@@ -516,6 +536,36 @@ $("go-main").addEventListener("click", () => {
 });
 
 $("reveal-month").addEventListener("click", () => { $("month-block").hidden = !$("month-block").hidden; });
+$("reveal-upload").addEventListener("click", () => { $("upload-block").hidden = !$("upload-block").hidden; });
+
+// Green Button upload. The file is read locally with FileReader and parsed
+// by greenbutton.js; nothing is transmitted, stored, or logged. On any
+// parse error we show the message and leave manual entry available above.
+$("gb-file").addEventListener("change", () => {
+  const file = $("gb-file").files[0];
+  $("gb-error").hidden = true;
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = parseEversourceUsageCsv(reader.result);
+      current = {
+        kind: "greenbutton",
+        enteredKwh: parsed.annualKwh,
+        span: { from: parsed.oldestReadDate, to: parsed.newestReadDate },
+      };
+      renderResult(calculate({ hasSolar: false, annualKwh: parsed.annualKwh }));
+    } catch (e) {
+      $("gb-error").textContent = e.message + " You can enter your kWh by hand above instead.";
+      $("gb-error").hidden = false;
+    }
+  };
+  reader.onerror = () => {
+    $("gb-error").textContent = "The file could not be read. You can enter your kWh by hand above instead.";
+    $("gb-error").hidden = false;
+  };
+  reader.readAsText(file);
+});
 
 $("go-month").addEventListener("click", () => {
   const n = readKwh($("kwh-month"), $("kwh-month-error"));
@@ -533,10 +583,16 @@ function renderResult(result) {
   if (result.mode === "annual") {
     lead.textContent = "Eversource's request could add an estimated";
     num.textContent = fmtCents(result.annualCents) + " a year";
-    sub.textContent = `to your bill. That averages about ${fmtCents(result.averageMonthlyCents)} a month.`;
+    let subText = `to your bill. That averages about ${fmtCents(result.averageMonthlyCents)} a month.`;
+    if (current.kind === "greenbutton" && current.span) {
+      subText += ` Based on your usage file, the 12 billing periods read ${current.span.from} through ${current.span.to}.`;
+    }
+    sub.textContent = subText;
     const kwhPart = current.kind === "average"
       ? `${fmtKwh(enteredKwh)} kWh average × 12 months`
-      : `${fmtKwh(enteredKwh)} kWh`;
+      : current.kind === "greenbutton"
+        ? `${fmtKwh(enteredKwh)} kWh from your usage file`
+        : `${fmtKwh(enteredKwh)} kWh`;
     $("math-formula").textContent =
       `${fmtDollars(DELTAS.fixedPerMonth)} × 12 months + ${kwhPart} × ${fmtRate(DELTAS.perKwh)} = ${fmtCents(result.annualCents)}`;
   } else if (result.mode === "singleMonthEstimate") {
